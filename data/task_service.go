@@ -3,63 +3,67 @@ package data
 import (
 	"errors"
 	"example/taskManager/models"
+	"sync"
 )
 
-// TaskService handles the business logic and data manipulation for tasks.
-type TaskService struct {
-	tasks map[string]*models.Task
-}
+var (
+	tasks  = []models.Task{} // in-memory tasks storage
+	lastID = 0               // tracks the last assigned ID
+	mu     sync.Mutex        // mutex to ensure goroutine safety
+)
 
-// NewTaskService creates and returns a new TaskService with an initialized in-memory task store.
-func NewTaskService() *TaskService {
-	return &TaskService{
-		tasks: make(map[string]*models.Task),
-	}
-}
-
-// GetTasks retrieves all tasks from the in-memory store.
-func (ts *TaskService) GetTasks() []*models.Task {
-	var tasks []*models.Task
-	for _, task := range ts.tasks {
-		tasks = append(tasks, task)
-	}
+// GetAllTasks retrieves all tasks from the in-memory storage.
+func GetAllTasks() []models.Task {
+	mu.Lock()
+	defer mu.Unlock()
 	return tasks
 }
 
-// GetTask retrieves a task by its ID from the in-memory store.
-func (ts *TaskService) GetTask(id string) (*models.Task, error) {
-	task, ok := ts.tasks[id] // Check if the task exists in the in-memory store.
-	if !ok {
-		return nil, errors.New("task not found")
+// GetTaskByID retrieves a specific task by its ID.
+func GetTaskByID(id int) (*models.Task, error) {
+	mu.Lock()
+	defer mu.Unlock()
+	for _, task := range tasks {
+		if task.ID == id {
+			return &task, nil
+		}
 	}
-	return task, nil
+	return nil, errors.New("task not found")
 }
 
-// CreateTask adds a new task to the in-memory store.
-func (ts *TaskService) CreateTask(task *models.Task) (*models.Task, error) {
-	ts.tasks[task.ID] = task
-	return task, nil
+//adds a new task to the in-memory storage.
+func CreateTask(task *models.Task) {
+	mu.Lock()
+	defer mu.Unlock()
+	lastID++
+	task.ID = lastID
+	tasks = append(tasks, *task)
 }
 
-// UpdateTask updates an existing task in the in-memory store.
-func (ts *TaskService) UpdateTask(id string, updatedTask *models.Task) (*models.Task, error) {
-	task, ok := ts.tasks[id]
-	if !ok {
-		return nil, errors.New("task not found")
+// modifies an existing task.
+func UpdateTask(id int, updatedTask *models.Task) error {
+	mu.Lock()
+	defer mu.Unlock()
+	for i, task := range tasks {
+		if task.ID == id {
+			updatedTask.ID = id 
+			tasks[i] = *updatedTask
+			return nil
+		}
 	}
-	task.Title = updatedTask.Title
-	task.Description = updatedTask.Description
-	task.Duedate = updatedTask.Duedate
-	task.Status = updatedTask.Status
-	return task, nil
+	return errors.New("task not found")
 }
 
-// DeleteTask removes a task by its ID from the in-memory store.
-func (ts *TaskService) DeleteTask(id string) error {
-	_, ok := ts.tasks[id]
-	if !ok {
-		return errors.New("task not found")
+// removes a task from the in-memory storage.
+func DeleteTask(id int) error {
+	mu.Lock()
+	defer mu.Unlock()
+	for i, task := range tasks {
+		if task.ID == id {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			return nil
+		}
 	}
-	delete(ts.tasks, id)
-	return nil
+	return errors.New("task not found")
 }
+
