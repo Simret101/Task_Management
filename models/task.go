@@ -1,14 +1,11 @@
 package models
 
-import (
-	"time"
-)
-
-// Task represents a task in the task management system.
+// Task represents a task with its ID, title, description, due date, and status.
 type Task struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Duedate     time.Time `json:"duedate"`
-	Status      string    `json:"status"`
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	DueDate     string `json:"duedate"`
+	Status      string `json:"status"`
 }
+
