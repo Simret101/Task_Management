@@ -6,17 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(taskController *controllers.TaskController) *gin.Engine {
+
+func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	tasks := r.Group("/tasks")
-	{
-		tasks.GET("", taskController.GetTasks)
-		tasks.GET("/:id", taskController.GetTask)
-		tasks.POST("", taskController.CreateTask)
-		tasks.PUT("/:id", taskController.UpdateTask)
-		tasks.DELETE("/:id", taskController.DeleteTask)
-	}
+	r.GET("/tasks", controllers.GetAllTasks)       
+	r.GET("/tasks/:id", controllers.GetTaskByID)  
+	r.POST("/tasks", controllers.CreateTask)       
+	r.PUT("/tasks/:id", controllers.UpdateTask)  
+	r.DELETE("/tasks/:id", controllers.DeleteTask)
 
 	return r
 }
