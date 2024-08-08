@@ -19,8 +19,9 @@ import (
 
 const taskFile = "task.json"
 
+// Styling using lipgloss for enhanced console output
 var (
-	titleStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("12")) // Style for Titles (unused in this update)
+	titleStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("12"))
 	descriptionStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("12"))
 	statusStyle       = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("12"))
 	dateStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color("12"))
@@ -35,8 +36,10 @@ var (
 	selectedRowStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("229")).Background(lipgloss.Color("19"))
 )
 
+// StartConsoleApp initializes and runs the console application
 func StartConsoleApp() {
 	for {
+		// Display menu options
 		fmt.Println(taskListViewStyle.Render("Task List"))
 		fmt.Println(promptStyle.Render("1. Add Task."))
 		fmt.Println(promptStyle.Render("2. View all Tasks."))
@@ -46,9 +49,12 @@ func StartConsoleApp() {
 		fmt.Println(promptStyle.Render("6. Mark Task as Complete."))
 		fmt.Println(promptStyle.Render("7. Exit"))
 		fmt.Println(promptStyle.Render("Enter your choice:"))
+
 		reader := bufio.NewReader(os.Stdin)
 		choice, _ := reader.ReadString('\n')
 		choice = strings.TrimSpace(choice)
+
+		// Handle user's choice
 		switch choice {
 		case "1":
 			addTask()
@@ -71,6 +77,7 @@ func StartConsoleApp() {
 	}
 }
 
+// loadTasks reads the tasks from the file and returns them
 func loadTasks() ([]models.Task, error) {
 	if _, err := os.Stat(taskFile); os.IsNotExist(err) {
 		return []models.Task{}, nil
@@ -87,6 +94,7 @@ func loadTasks() ([]models.Task, error) {
 	return tasks, nil
 }
 
+// saveTasks writes the tasks to the file
 func saveTasks(tasks []models.Task) error {
 	data, err := json.Marshal(tasks)
 	if err != nil {
@@ -99,6 +107,7 @@ func saveTasks(tasks []models.Task) error {
 	return nil
 }
 
+// validateInput prompts the user for input and validates it using the provided function
 func validateInput(prompt string, validateFunc func(string) (string, error)) string {
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -114,6 +123,7 @@ func validateInput(prompt string, validateFunc func(string) (string, error)) str
 	}
 }
 
+// validateNonEmpty ensures that the input is not empty
 func validateNonEmpty(input string) (string, error) {
 	if input == "" {
 		return "", fmt.Errorf("input cannot be empty")
@@ -121,6 +131,7 @@ func validateNonEmpty(input string) (string, error) {
 	return input, nil
 }
 
+// validateDate ensures that the input matches the "YYYY-MM-DD" date format
 func validateDate(input string) (string, error) {
 	_, err := time.Parse("2006-01-02", input)
 	if err != nil {
@@ -129,6 +140,7 @@ func validateDate(input string) (string, error) {
 	return input, nil
 }
 
+// validateStatus ensures that the input is one of the valid task statuses
 func validateStatus(input string) (string, error) {
 	validStatuses := []string{"completed", "inprogress", "started"}
 	for _, status := range validStatuses {
@@ -139,15 +151,20 @@ func validateStatus(input string) (string, error) {
 	return "", fmt.Errorf("invalid status. Valid options are: completed, inprogress, started")
 }
 
+// validateLettersOnly ensures that the title contains only letters and spaces, and is not empty
 func validateLettersOnly(input string) (string, error) {
+	if input == "" {
+		return "", fmt.Errorf("title cannot be empty")
+	}
 	for _, char := range input {
-		if !unicode.IsLetter(char) {
-			return "", fmt.Errorf("title can only contain letters")
+		if !unicode.IsLetter(char) && !unicode.IsSpace(char) {
+			return "", fmt.Errorf("title can only contain letters and spaces")
 		}
 	}
 	return input, nil
 }
 
+// viewTasks displays the list of tasks in a table format
 func viewTasks() {
 	tasks, err := loadTasks()
 	if err != nil {
@@ -159,6 +176,7 @@ func viewTasks() {
 		return
 	}
 
+	// Define columns for the task table
 	columns := []table.Column{
 		{Title: "ID", Width: 5},
 		{Title: "Title", Width: 20},
@@ -179,6 +197,7 @@ func viewTasks() {
 		rows = append(rows, row)
 	}
 
+	// Create and configure the table
 	t := table.New(
 		table.WithColumns(columns),
 		table.WithRows(rows),
@@ -192,6 +211,7 @@ func viewTasks() {
 		Selected: tableCellStyle.Copy().Background(lipgloss.Color("25")),
 	})
 
+	// Start the tea program to display the table
 	p := tea.NewProgram(model{t})
 
 	if err := p.Start(); err != nil {
@@ -200,14 +220,17 @@ func viewTasks() {
 	}
 }
 
+// Tea model for table view
 type model struct {
 	table table.Model
 }
 
+// Init initializes the tea model
 func (m model) Init() tea.Cmd {
 	return nil
 }
 
+// Update updates the tea model based on user input
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -222,9 +245,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// View renders the tea model view
 func (m model) View() string {
 	return taskListViewStyle.Render("Task List") + "\n" + m.table.View() + "\nPress 'q' to return to the main menu."
 }
+
+// addTask allows the user to add a new task
 func addTask() {
 	title := validateInput("Enter task title: ", validateLettersOnly)
 	description := validateInput("Enter task description: ", validateNonEmpty)
@@ -248,9 +274,10 @@ func addTask() {
 		fmt.Printf(errorStyle.Render("Error saving tasks: %v\n"), err)
 		return
 	}
-	// Modified line to match the style of other success messages
 	fmt.Println(selectedStyle.Render("Task added successfully."))
 }
+
+// getTaskByID retrieves and displays a task based on its ID
 func getTaskByID() {
 	tasks, err := loadTasks()
 	if err != nil {
@@ -271,15 +298,14 @@ func getTaskByID() {
 		return
 	}
 	task := tasks[taskNum-1]
-	// Removed background color to match the style of other text outputs
-	fmt.Printf("ID: %d\nTitle: %s\nDescription: %s\nDue Date: %s\nStatus: %s\n",
-		taskNum,
-		titleStyle.Render(task.Title),
-		descriptionStyle.Render(task.Description),
-		dateStyle.Render(task.DueDate),
-		statusStyle.Render(task.Status))
+	fmt.Println("Task Details:")
+	fmt.Printf("Title: %s\n", task.Title)
+	fmt.Printf("Description: %s\n", task.Description)
+	fmt.Printf("Due Date: %s\n", task.DueDate)
+	fmt.Printf("Status: %s\n", task.Status)
 }
 
+// updateTask allows the user to update an existing task
 func updateTask() {
 	tasks, err := loadTasks()
 	if err != nil {
@@ -313,6 +339,7 @@ func updateTask() {
 	fmt.Println(selectedStyle.Render("Task updated successfully."))
 }
 
+// removeTask allows the user to remove a task based on its number
 func removeTask() {
 	tasks, err := loadTasks()
 	if err != nil {
@@ -342,6 +369,7 @@ func removeTask() {
 	fmt.Println(selectedStyle.Render("Task deleted successfully."))
 }
 
+// markComplete allows the user to mark a task as complete
 func markComplete() {
 	tasks, err := loadTasks()
 	if err != nil {
@@ -370,3 +398,4 @@ func markComplete() {
 	}
 	fmt.Println(selectedStyle.Render("Task marked as complete."))
 }
+
