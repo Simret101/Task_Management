@@ -12,14 +12,14 @@ var (
 	mu     sync.Mutex        // mutex to ensure goroutine safety
 )
 
-// GetAllTasks retrieves all tasks from the in-memory storage.
+// retrieves all tasks from the in-memory storage.
 func GetAllTasks() []models.Task {
 	mu.Lock()
 	defer mu.Unlock()
 	return tasks
 }
 
-// GetTaskByID retrieves a specific task by its ID.
+// retrieves a specific task by its ID.
 func GetTaskByID(id int) (*models.Task, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -31,7 +31,7 @@ func GetTaskByID(id int) (*models.Task, error) {
 	return nil, errors.New("task not found")
 }
 
-//adds a new task to the in-memory storage.
+// adds a new task to the in-memory storage.
 func CreateTask(task *models.Task) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -46,7 +46,7 @@ func UpdateTask(id int, updatedTask *models.Task) error {
 	defer mu.Unlock()
 	for i, task := range tasks {
 		if task.ID == id {
-			updatedTask.ID = id 
+			updatedTask.ID = id
 			tasks[i] = *updatedTask
 			return nil
 		}
@@ -66,4 +66,5 @@ func DeleteTask(id int) error {
 	}
 	return errors.New("task not found")
 }
+
 
