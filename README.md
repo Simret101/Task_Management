@@ -71,7 +71,7 @@ The API exposes the following endpoints:
 - **PUT /tasks/:id**: Update a task by ID.
 - **DELETE /tasks/:id**: Delete a task by ID.
 
-For detailed information on each endpoint, refer to the [http://localhost:8080/swagger/index.html#/].
+For detailed information on each endpoint, refer to the [Swagger Documentation][http://localhost:8080/swagger/index.html#/].
 
 ## Swagger Documentation
 The API is documented using Swagger. You can explore the documentation and test endpoints directly in your browser.
