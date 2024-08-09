@@ -71,7 +71,7 @@ The API exposes the following endpoints:
 - **PUT /tasks/:id**: Update a task by ID.
 - **DELETE /tasks/:id**: Delete a task by ID.
 
-For detailed information on each endpoint, refer to the [Swagger Documentation](#swagger-documentation).
+For detailed information on each endpoint, refer to the [http://localhost:8080/swagger/index.html#/].
 
 ## Swagger Documentation
 The API is documented using Swagger. You can explore the documentation and test endpoints directly in your browser.
@@ -81,7 +81,7 @@ The API is documented using Swagger. You can explore the documentation and test 
 ## Postman Collection
 A Postman collection is provided for testing the API endpoints.
 
-- **Access Postman Documentation**: [Postman Documentation]([https://documenter.getpostman.com/view/37289771/2sA3rwNZnx])
+- **Access Postman Documentation**: [Postman Documentation][https://documenter.getpostman.com/view/37289771/2sA3rwNZnx]
 - **Import Collection**: The collection can be imported into your Postman workspace for easy testing.
 
 ## Contributing
