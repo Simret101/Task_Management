@@ -19,7 +19,7 @@ import (
 
 const taskFile = "task.json"
 
-// Styling using lipgloss for enhanced console output
+
 var (
 	titleStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("12"))
 	descriptionStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("12"))
@@ -398,4 +398,5 @@ func markComplete() {
 	}
 	fmt.Println(selectedStyle.Render("Task marked as complete."))
 }
+
 
