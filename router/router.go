@@ -3,20 +3,37 @@ package router
 import (
 	"example/taskManager/controllers"
 
+	_ "example/taskManager/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// initializes the router and sets up the API routes.
+//@title Task API
+//@version 1.0
+//@description This is an api for task management system
+//@contact.name Simret Belete
+//@contact.url https://github.com/Simret101
+//@contact.email semretb4@gmail.com
+
+// @host localhost:8080
+// @BasePath /api/v1
+// SetupRouter creates the router and initializes the services, repositories, use cases, and controllers
+// It sets up the routes for the API endpoints
+
 func SetupRouter() *gin.Engine {
-	// Create a Gin router with default middleware (logger and recovery)
 	r := gin.Default()
-
-	// Define the routes and their corresponding controller functions
-	r.GET("/tasks", controllers.GetAllTasks)       // to retrieve all tasks
-	r.GET("/tasks/:id", controllers.GetTaskByID)   // to retrieve a specific task by ID
-	r.POST("/tasks", controllers.CreateTask)       // to create a new task
-	r.PUT("/tasks/:id", controllers.UpdateTask)    // to update an existing task by ID
-	r.DELETE("/tasks/:id", controllers.DeleteTask) // to delete a task by ID
-
+	v1 := r.Group("/api/v1")
+	tasks := v1.Group("/tasks")
+	{
+		// Define the routes and their corresponding controller functions
+		tasks.GET("", ginSwagger.WrapHandler(swaggerFiles.Handler), controllers.GetAllTasks) 
+		tasks.GET("/:id", controllers.GetTaskByID)                                           
+		tasks.POST("", controllers.CreateTask)                                               
+		tasks.PUT("/:id", controllers.UpdateTask)                                            
+		tasks.DELETE("/:id", controllers.DeleteTask)                                         
+	}
 	return r
 }
+
