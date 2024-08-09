@@ -2,13 +2,13 @@ package main
 
 import (
 	"bufio"
+	"example/taskManager/console"
+	_ "example/taskManager/docs"
+	"example/taskManager/router"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-
-	"example/taskManager/console"
-	"example/taskManager/router"
 )
 
 // clearScreen clears the console screen.
@@ -52,7 +52,7 @@ func main() {
 	case "1":
 		fmt.Println("Starting API mode...")
 		r := router.SetupRouter()
-		if err := r.Run(":8080"); err != nil {
+		if err := r.Run(); err != nil {
 			fmt.Println("Error starting API server:", err)
 		}
 
