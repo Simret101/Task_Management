@@ -16,7 +16,7 @@ var (
 func GetAllTasks() []models.Task {
 	mu.Lock()
 	defer mu.Unlock()
-	return append([]models.Task(nil), tasks...) // Return a copy to avoid race conditions
+	return append([]models.Task(nil), tasks...) 
 }
 
 // GetTaskByID retrieves a specific task by its ID.
