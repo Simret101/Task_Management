@@ -5,8 +5,8 @@ This document provides details about the Task Management API endpoints, includin
 
 ## API Documentation Links
 
-- **Swagger Documentation:** [Swagger UI](http://localhost:8080/swagger/index.html#/)
-- **Postman Documentation:** [Postman Collection](https://documenter.getpostman.com/view/37289771/2sA3rwNZnx)
+- **Swagger Documentation:** [http://localhost:8080/swagger/index.html#/]
+- **Postman Documentation:** [https://documenter.getpostman.com/view/37289771/2sA3rwNZnx]
 
 #
 This structure gives users quick access to the basic endpoint details while also directing them to the more detailed Swagger and Postman documentation.
