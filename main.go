@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"example/taskManager/console"
-	_ "example/taskManager/docs"
 	"example/taskManager/router"
 	"fmt"
 	"os"
@@ -50,18 +49,28 @@ func main() {
 	// Handle the user's choice
 	switch mode {
 	case "1":
-		fmt.Println("Starting API mode...")
-		r := router.SetupRouter()
-		if err := r.Run(); err != nil {
-			fmt.Println("Error starting API server:", err)
-		}
-
+		startAPIMode()
 	case "2":
-		fmt.Println("Starting console mode...")
-		console.StartConsoleApp()
+		startConsoleMode()
 	default:
 		fmt.Println("Invalid mode. Please choose 1 or 2.")
 	}
 }
+
+// startAPIMode starts the API server.
+func startAPIMode() {
+	fmt.Println("Starting API mode...")
+	r := router.SetupRouter()
+	if err := r.Run(); err != nil {
+		fmt.Println("Error starting API server:", err)
+	}
+}
+
+// startConsoleMode starts the console-based task manager.
+func startConsoleMode() {
+	fmt.Println("Starting console mode...")
+	console.StartConsoleApp()
+}
+
 
 
