@@ -220,12 +220,12 @@ func viewTasks() {
 	}
 }
 
-// Tea model for table view
+
 type model struct {
 	table table.Model
 }
 
-// Init initializes the tea model
+
 func (m model) Init() tea.Cmd {
 	return nil
 }
