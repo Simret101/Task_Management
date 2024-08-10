@@ -19,21 +19,24 @@ import (
 
 // @host localhost:8080
 // @BasePath /api/v1
+//// @Router /tasks [get]
 // SetupRouter creates the router and initializes the services, repositories, use cases, and controllers
 // It sets up the routes for the API endpoints
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+
 	v1 := r.Group("/api/v1")
 	tasks := v1.Group("/tasks")
 	{
 		// Define the routes and their corresponding controller functions
-		tasks.GET("", ginSwagger.WrapHandler(swaggerFiles.Handler), controllers.GetAllTasks) 
-		tasks.GET("/:id", controllers.GetTaskByID)                                           
-		tasks.POST("", controllers.CreateTask)                                               
-		tasks.PUT("/:id", controllers.UpdateTask)                                            
-		tasks.DELETE("/:id", controllers.DeleteTask)                                         
+		tasks.GET("", ginSwagger.WrapHandler(swaggerFiles.Handler), controllers.GetAllTasks)
+		tasks.GET("/:id", controllers.GetTaskByID)
+		tasks.POST("", controllers.CreateTask)
+		tasks.PUT("/:id", controllers.UpdateTask)
+		tasks.DELETE("/:id", controllers.DeleteTask)
 	}
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return r
 }
 
