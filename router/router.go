@@ -29,7 +29,7 @@ func SetupRouter() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	tasks := v1.Group("/tasks")
 	{
-		// Define the routes and their corresponding controller functions
+		
 		tasks.GET("", ginSwagger.WrapHandler(swaggerFiles.Handler), controllers.GetAllTasks)
 		tasks.GET("/:id", controllers.GetTaskByID)
 		tasks.POST("", controllers.CreateTask)
