@@ -7,19 +7,19 @@ import (
 )
 
 var (
-	tasks  = []models.Task{} // in-memory tasks storage
-	lastID = 0               // tracks the last assigned ID
-	mu     sync.Mutex        // mutex to ensure goroutine safety
+	tasks  = []models.Task{}
+	lastID = 0
+	mu     sync.Mutex
 )
 
-// retrieves all tasks from the in-memory storage.
+// GetAllTasks retrieves all tasks from the in-memory storage.
 func GetAllTasks() []models.Task {
 	mu.Lock()
 	defer mu.Unlock()
-	return tasks
+	return append([]models.Task(nil), tasks...) // Return a copy to avoid race conditions
 }
 
-// retrieves a specific task by its ID.
+// GetTaskByID retrieves a specific task by its ID.
 func GetTaskByID(id int) (*models.Task, error) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -31,7 +31,7 @@ func GetTaskByID(id int) (*models.Task, error) {
 	return nil, errors.New("task not found")
 }
 
-// adds a new task to the in-memory storage.
+// CreateTask adds a new task to the in-memory storage.
 func CreateTask(task *models.Task) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -40,7 +40,7 @@ func CreateTask(task *models.Task) {
 	tasks = append(tasks, *task)
 }
 
-// modifies an existing task.
+// UpdateTask modifies an existing task.
 func UpdateTask(id int, updatedTask *models.Task) error {
 	mu.Lock()
 	defer mu.Unlock()
@@ -54,7 +54,7 @@ func UpdateTask(id int, updatedTask *models.Task) error {
 	return errors.New("task not found")
 }
 
-// removes a task from the in-memory storage.
+// DeleteTask removes a task from the in-memory storage.
 func DeleteTask(id int) error {
 	mu.Lock()
 	defer mu.Unlock()
@@ -66,5 +66,6 @@ func DeleteTask(id int) error {
 	}
 	return errors.New("task not found")
 }
+
 
 
